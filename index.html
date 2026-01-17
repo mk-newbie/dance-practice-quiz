@@ -1,24 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dance Exam Practice</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padabheda Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    button {
+      margin: 0.5rem 0;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+    }
+    #answers button {
+      display: block;
+      width: 100%;
+    }
+    textarea {
+      font-size: 1rem;
+      padding: 0.5rem;
+    }
+    #scoreBox {
+      white-space: pre-wrap;
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+    }
+  </style>
 </head>
 <body>
+  <h1>Padabheda Quiz</h1>
 
-  <div class="quiz-container">
-    <h1>Dance Exam Practice</h1>
+  <div id="question"></div>
+  <div id="answers"></div>
 
-    <div id="question-box"></div>
+  <button id="nextBtn">Next</button>
+  <button id="retryBtn" class="hidden">Retry Quiz</button>
 
-    <div id="options"></div>
-
-    <button id="nextBtn">Next</button>
-
-    <div id="result" class="hidden"></div>
-    <button id="restart-btn" class="hidden">Retake Quiz</button>
-  </div>
+  <div id="scoreBox" class="hidden"></div>
 
   <script src="script.js"></script>
 </body>
