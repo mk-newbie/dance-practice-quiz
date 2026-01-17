@@ -96,7 +96,9 @@ function selectAnswer(index) {
 // NEXT BUTTON
 // ===============================
 document.getElementById("nextBtn").onclick = () => {
+  document.getElementById("nextBtn").disabled = true;
   current++;
+
   if (current < shuffled.length) {
     showQuestion();
   } else {
