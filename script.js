@@ -1,88 +1,153 @@
+// ===============================
+// QUESTIONS
+// ===============================
 const questions = [
+  // ---------- MCQ QUESTIONS ----------
   {
-    question: "What is the starting position in Bharatanatyam called?",
-    options: ["Araimandi", "Samapada", "Chowka", "Tribhangi"],
-    answer: 0
+    text: "What does the word 'Padabheda' mean?",
+    choices: ["Feet Positions", "Hands Positions", "Head Positions", "Neck Positions"],
+    correct: 0
   },
   {
-    question: "How many beats are in Adi Tala?",
-    options: ["6", "8", "10", "12"],
-    answer: 1
+    text: "How many types of Padabheda are there?",
+    choices: ["1", "5", "9", "6"],
+    correct: 3
   },
   {
-    question: "What does Abhinaya primarily express?",
-    options: ["Rhythm", "Expression", "Posture", "Footwork"],
-    answer: 1
+    text: "What is Laya?",
+    choices: ["Speed of music", "Dance costume", "Foot position", "Hand gesture"],
+    correct: 0
+  },
+  {
+    text: "What is Taal?",
+    choices: ["A rhythmic cycle", "A dance pose", "A hand movement", "A costume"],
+    correct: 0
+  },
+
+  // ---------- TEXT (WRITE ANSWER) QUESTION ----------
+  {
+    text: "Write the different feet positions.",
+    type: "text",
+    modelAnswer:
+      "Samapada\nUdghateetapada\nAgratalasanchara Pada\nAnchita Pada\nKunchita Pada\nSuchi Pada"
   }
 ];
 
-let currentQuestion = 0;
+// ===============================
+// QUIZ STATE
+// ===============================
+let shuffled = [];
+let current = 0;
 let score = 0;
-let shuffledQuestions = [];
 
-function shuffle(array) {
-  return array.sort(() => Math.random() - 0.5);
+// ===============================
+// SHUFFLE QUESTIONS
+// ===============================
+function shuffleQuestions() {
+  shuffled = [...questions].sort(() => Math.random() - 0.5);
 }
 
-function loadQuestion() {
-  const q = shuffledQuestions[currentQuestion];
-  document.getElementById("question-box").innerText = q.question;
+// ===============================
+// SHOW QUESTION
+// ===============================
+function showQuestion() {
+  document.getElementById("nextBtn").disabled = true;
 
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
+  const q = shuffled[current];
+  document.getElementById("question").innerText = q.text;
 
-  q.options.forEach((option, index) => {
-    const btn = document.createElement("button");
-    btn.innerText = option;
-    btn.onclick = () => selectAnswer(index);
-    optionsDiv.appendChild(btn);
-  });
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML = "";
+
+  // ----- MULTIPLE CHOICE -----
+  if (!q.type) {
+    q.choices.forEach((choice, index) => {
+      const btn = document.createElement("button");
+      btn.innerText = choice;
+      btn.onclick = () => selectAnswer(index);
+      answersDiv.appendChild(btn);
+    });
+  }
+
+  // ----- TEXT ANSWER -----
+  if (q.type === "text") {
+    const textarea = document.createElement("textarea");
+    textarea.rows = 5;
+    textarea.style.width = "100%";
+    textarea.placeholder = "Type your answer here...";
+    textarea.oninput = () => {
+      document.getElementById("nextBtn").disabled = false;
+    };
+    answersDiv.appendChild(textarea);
+  }
 }
 
-function selectAnswer(selected) {
-  if (selected === shuffledQuestions[currentQuestion].answer) {
+// ===============================
+// SELECT MCQ ANSWER
+// ===============================
+function selectAnswer(index) {
+  if (index === shuffled[current].correct) {
     score++;
   }
-  document.getElementById("next-btn").disabled = false;
+  document.getElementById("nextBtn").disabled = false;
 }
 
-document.getElementById("next-btn").onclick = () => {
-  currentQuestion++;
-  document.getElementById("next-btn").disabled = true;
-
-  if (currentQuestion < shuffledQuestions.length) {
-    loadQuestion();
+// ===============================
+// NEXT BUTTON
+// ===============================
+document.getElementById("nextBtn").onclick = () => {
+  current++;
+  if (current < shuffled.length) {
+    showQuestion();
   } else {
-    showResult();
+    showScore();
   }
 };
 
-function showResult() {
-  document.getElementById("question-box").innerText = "";
-  document.getElementById("options").innerHTML = "";
-  document.getElementById("next-btn").classList.add("hidden");
+// ===============================
+// SHOW SCORE & MODEL ANSWERS
+// ===============================
+function showScore() {
+  document.getElementById("question").innerText = "";
+  document.getElementById("answers").innerHTML = "";
+  document.getElementById("nextBtn").classList.add("hidden");
 
-  document.getElementById("result").innerText =
-    `Your score: ${score} / ${shuffledQuestions.length}`;
-  document.getElementById("result").classList.remove("hidden");
-  document.getElementById("restart-btn").classList.remove("hidden");
+  let textAnswerSection = "";
+
+  shuffled.forEach(q => {
+    if (q.type === "text") {
+      textAnswerSection += `\n\n✏️ ${q.text}\n${q.modelAnswer}`;
+    }
+  });
+
+  const scoreBox = document.getElementById("scoreBox");
+  scoreBox.innerText =
+    `🎉 You scored ${score} out of ${shuffled.filter(q => !q.type).length}!\n\nPractice Answers:${textAnswerSection}`;
+
+  scoreBox.classList.remove("hidden");
+  document.getElementById("retryBtn").classList.remove("hidden");
 }
 
-document.getElementById("restart-btn").onclick = () => {
+// ===============================
+// RESTART QUIZ
+// ===============================
+document.getElementById("retryBtn").onclick = () => {
   startQuiz();
 };
 
 function startQuiz() {
   score = 0;
-  currentQuestion = 0;
-  shuffledQuestions = shuffle([...questions]);
+  current = 0;
+  shuffleQuestions();
 
-  document.getElementById("next-btn").classList.remove("hidden");
-  document.getElementById("result").classList.add("hidden");
-  document.getElementById("restart-btn").classList.add("hidden");
-  document.getElementById("next-btn").disabled = true;
+  document.getElementById("scoreBox").classList.add("hidden");
+  document.getElementById("retryBtn").classList.add("hidden");
+  document.getElementById("nextBtn").classList.remove("hidden");
 
-  loadQuestion();
+  showQuestion();
 }
 
+// ===============================
+// START QUIZ
+// ===============================
 startQuiz();
